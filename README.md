@@ -1,6 +1,6 @@
 ![image](https://github.com/driezie/user-experience-enhanced-website/assets/80174866/6843c50d-7093-4830-a946-803156d70587)
 
-# Titel
+# Tumi Mundo
 <!-- Geef je project een titel en schrijf in één zin wat het is -->
 
 ## Inhoudsopgave
