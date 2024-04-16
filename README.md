@@ -1,4 +1,3 @@
-> _Fork_ deze leertaak en ga aan de slag. Onderstaande outline ga je gedurende deze taak in jouw eigen GitHub omgeving uitwerken. De instructie vind je in: [docs/INSTRUCTIONS.md](docs/INSTRUCTIONS.md)
 ![image](https://github.com/driezie/user-experience-enhanced-website/assets/80174866/6843c50d-7093-4830-a946-803156d70587)
 
 # Titel
