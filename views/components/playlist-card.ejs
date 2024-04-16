@@ -1,0 +1,38 @@
+<!-- 
+    Available variables:
+    - item: object
+        - title: string
+        - slug: string
+        - image: string
+ -->
+<div class="card card-playlist">
+    <img class="logo" src="https://fdnd-agency.directus.app/assets/<%= item.image %>" alt="<%= item.title %>">
+    <div class="text-content">
+        <div class="title-content">
+            <h3><%= item.title %></h3>
+        </div>
+        <div class="actions">
+            <a href="<%= item.slug %>" class="play">
+                <img src="images/play-button.png" alt="play button">
+                <span>
+                    <!-- Dit moet ik nog veranderen naar de tijd -->
+                    <%= item.stories.length %> stories
+                </span>
+            </a>
+            <div class="additional-actions">
+                <form action="/like" method="POST">
+                    <!-- Include a hidden input field for itemId -->
+                    <input type="hidden" name="itemId" value="<%= item.slug %>">
+                    <!-- Heart button to submit the form -->
+                    <button type="submit">
+                        <% if (item.liked == true) { %>
+                            <img src="/svg/heart-filled.svg" alt="heart icon">
+                        <% } else { %>
+                            <img src="/svg/heart.svg" alt="heart icon">
+                        <% } %>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
