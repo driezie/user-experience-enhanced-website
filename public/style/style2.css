@@ -38,7 +38,7 @@ img {
   margin-top: 70px;
   justify-content: space-between;
   margin: 0 auto;
-  max-width: 1200px;
+  max-width: 90rem;
   padding: 0 1rem;
   padding: 34px 1rem;
   height: calc(100vh - 70px);
@@ -237,3 +237,41 @@ img {
     }
   }
 }
+
+
+/* Media 1200 */
+
+@media (max-width: 1200px) {
+  .info-content {
+      display: none;
+  }
+
+  .nav-container nav .buttons {
+    display: none;
+  }
+}
+
+
+@media (max-width: 768px) {
+  body {
+      background-image: none;
+      background: linear-gradient(180deg, #3C6FA9 0%, #052242 100%);
+  }
+  .container {
+      height: auto;
+      padding: 0;
+  }
+
+  .dashboard {
+    background-color: transparent;
+    padding: 20px;
+  }
+
+  .card-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+}
+}
+
+
