@@ -14,135 +14,33 @@ app.set('views', path.join(__dirname, '../views'));
 
 const apiUrl = "https://fdnd-agency.directus.app/items";
 
-// File to store liked items
-const likesFile = path.join(__dirname, 'liked-items.json');
-
-
-// Function to save liked items to file
-async function saveLikes() {
-  try {
-    await fs.writeFile(likesFile, JSON.stringify(likes));
-  } catch (error) {
-    // console.error("Error saving liked items:", error);
-  }
-}
-
-function dataConverter(request) {
-  // console.log("Data successfully converted: ", request.data)
-  return request.data;
-}
+// Zorg dat werken met request data makkelijker wordt
+app.use(express.json());
 
 // Ignore favicon.ico request
 app.get('/favicon.ico', (req, res) => {
   res.status(204);
 });
 
-// Load liked items from file on server startup
-async function loadLikes() {
-  try {
-    const data = await fs.readFile(likesFile);
-    return JSON.parse(data);
-  } catch (error) {
-    // If file doesn't exist or error reading, return empty array
-    return [];
-  }
-}
 
-let likes = [];
-loadLikes().then(data => {
-  likes = data;
-});
 
-// Render the homepage with playlists and liked items
+let favourites = {};
+
 app.get('/', async (request, response) => {
   try {
-    // Load liked items
-    let likedPlaylistIds = await loadLikes();
-
+    console.log('favourites: ', favourites);
     const API = `${apiUrl}/tm_playlist`;
     const allPlaylistsResponse = await fetch(API);
-    const allPlaylists = await allPlaylistsResponse.json();
+    const playlists = await allPlaylistsResponse.json();
 
-    // Fetch liked playlists
-    const fetchLikedAPI =  `${apiUrl}/tm_playlist?filter[slug][_in]=${likedPlaylistIds.join(",")}&fields=title,image,description,slug,stories.tm_story_id.title,stories.tm_story_id.summary,stories.tm_story_id.image,stories.tm_story_id.slug,language_id.language,language_id.flag.id`;
-    const [fetchLikedData] = await Promise.all([
-      fetch(fetchLikedAPI).then(res => res.json()),
-    ]);
-
-    // Add a 'liked' property to each playlist item from all playlists
-    const playlistsWithLiked = allPlaylists.data.map(playlist => {
-      playlist.liked = true
-      return playlist;
-    });
-
-    // Add a 'liked' property to each playlist item from liked playlists without a check
-    fetchLikedData.data.forEach(likedPlaylist => {
-      likedPlaylist.liked = true
-    });
-
-    console.log(fetchLikedData.data);
+    // Recieve all liked playlists
+    const liked_playlists = [];
 
     response.render('index2', {
-      playlists: playlistsWithLiked,
-      liked: fetchLikedData.data,
+      playlists: playlists.data || [],
+      liked_playlists: liked_playlists || [],
     });
-
-  } catch (error) {
-    console.error(error);
-    response.status(500).send("Internal Server Error");
-  }
-});
-
-
-
-
-// Render playlists
-app.get('/playlists', async (request, response) => {
-  try {
-    const API =  `${apiUrl}/tm_playlist`;
-    const [data] = await Promise.all([
-      fetch(API).then(res => res.json()),
-    ]);
-    const dataFinal = dataConverter(data);
-    response.render('playlists', {
-      playlist: dataFinal,
-    });
-  } catch (error) {
-    console.error(error);
-    response.status(500).send("Internal Server Error");
-  }
-});
-
-// Render playlist based on slug
-app.get('/:slug', async (request, response) => {
-  try {
-    const API = `${apiUrl}/tm_playlist?filter={"slug":"${request.params.slug}"}&fields=title,description,slug,stories.tm_story_id.title,stories.tm_story_id.summary,stories.tm_story_id.image,stories.tm_story_id.slug,language_id.language,language_id.flag.id`;
-    const [data] = await Promise.all([
-      fetch(API).then(res => res.json()),
-    ]);
-    const dataFinal = dataConverter(data);
-    response.render('playlist', {
-      playlist: dataFinal[0],
-      stories: dataFinal[0].stories || [],
-      language: dataFinal[0].language_id || [],
-    });
-  } catch (error) {
-    console.error(error);
-    response.status(500).send("Internal Server Error");
-  }
-});
-
-// Render story based on playlist and story slug
-app.get('/:playlistSlug/:storySlug', async (request, response) => {
-  try {
-    const API = `${apiUrl}/tm_story?filter={"slug":"${request.params.storySlug}"}&fields=title,description,slug,image,video,playlist.tm_playlist_id.title,playlist.tm_playlist_id.slug, playlist.tm_playlist_id.description,`;
-    const [data] = await Promise.all([
-      fetch(API).then(res => res.json()),
-    ]);
-    const dataFinal = dataConverter(data);
-    response.render('story', {
-      story: dataFinal[0],
-    });
+    
   } catch (error) {
     console.error(error);
     response.status(500).send("Internal Server Error");
@@ -152,51 +50,76 @@ app.get('/:playlistSlug/:storySlug', async (request, response) => {
 // Like endpoint to store liked item IDs
 app.post('/like', async (req, res) => {
   try {
-      const { itemId } = req.body;
-      console.log(req.body);
-      console.log('Item liked:', itemId);
-      // Store liked item ID
-      likes.push(itemId);
-      console.log('Liked items:', likes);
-      // Save liked items to file
-      await saveLikes();
+    const { itemId } = req.body;
+    console.log('Item liked:', itemId);
+   
 
-      const API = `${apiUrl}/tm_playlist`;
-      const allPlaylistsResponse = await fetch(API);
-      const allPlaylists = await allPlaylistsResponse.json();
-
-      let likedPlaylistIds = likes;
-
-      // ?filter[slug][_in]=1,2
-      const fetchLikedAPI =  `${apiUrl}/tm_playlist?filter[slug][_in]=${likedPlaylistIds.join(",")}&fields=title,image,description,slug,stories.tm_story_id.title,stories.tm_story_id.summary,stories.tm_story_id.image,stories.tm_story_id.slug,language_id.language,language_id.flag.id`;
-      const [fetchLikedData] = await Promise.all([
-        fetch(fetchLikedAPI).then(res => res.json()),
-      ]);
-      
-      res.render('index', {
-        playlist: allPlaylists.data,
-        liked: fetchLikedData.data,
-      });
-
+    if (itemId) {
+      if (itemId in favourites) {
+        delete favourites[itemId];
+      } else {
+        favourites[itemId] = true;
+      }
+      res.json({ status: 'success' });
+    }
   } catch (error) {
-      console.error('Error occurred:', error);
-      res.status(500).json({ error: 'Internal server error' });
+    console.error(error);
+    res.status(500).send('Internal Server Error');
   }
 });
 
-const port = process.env.PORT || 8080;
 
-httpServer.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+
+// Render playlists
+app.get('/playlists', async (request, response) => {
+  // try {
+  //   const API =  `${apiUrl}/tm_playlist`;
+  //   const [data] = await Promise.all([
+  //     fetch(API).then(res => res.json()),
+  //   ]);
+  //   response.render('playlists', {
+  //     playlist: dataFinal.data,
+  //   });
+  // } catch (error) {
+  //   console.error(error);
+  //   response.status(500).send("Internal Server Error");
+  // }
 });
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
-
-  socket.on("disconnect", () => {
-    console.log("User disconnected");
-  });
+// Render playlist based on slug
+app.get('/:slug', async (request, response) => {
+  // try {
+  //   const API = `${apiUrl}/tm_playlist?filter={"slug":"${request.params.slug}"}&fields=title,description,slug,stories.tm_story_id.title,stories.tm_story_id.summary,stories.tm_story_id.image,stories.tm_story_id.slug,language_id.language,language_id.flag.id`;
+  //   const [data] = await Promise.all([
+  //     fetch(API).then(res => res.json()),
+  //   ]);
+  //   response.render('playlist', {
+  //     playlist: dataFinal.data[0],
+  //     stories: dataFinal.data[0].stories || [],
+  //     language: dataFinal.data[0].language_id || [],
+  //   });
+  // } catch (error) {
+  //   console.error(error);
+  //   response.status(500).send("Internal Server Error");
+  // }
 });
+
+// Render story based on playlist and story slug
+app.get('/:playlistSlug/:storySlug', async (request, response) => {
+  // try {
+  //   const API = `${apiUrl}/tm_story?filter={"slug":"${request.params.storySlug}"}&fields=title,description,slug,image,video,playlist.tm_playlist_id.title,playlist.tm_playlist_id.slug, playlist.tm_playlist_id.description,`;
+  //   const [data] = await Promise.all([
+  //     fetch(API).then(res => res.json()),
+  //   ]);
+  //   response.render('story', {
+  //     story: dataFinal.data[0],
+  //   });
+  // } catch (error) {
+  //   console.error(error);
+  //   response.status(500).send("Internal Server Error");
+  // }
+});
+
 
 // Handle server error
 httpServer.on("error", (e) => {

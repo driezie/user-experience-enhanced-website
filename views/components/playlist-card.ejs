@@ -22,7 +22,7 @@
             <div class="additional-actions">
                 <form action="/like" method="POST">
                     <!-- Include a hidden input field for itemId -->
-                    <input type="hidden" name="itemId" value="<%= item.slug %>">
+                    <input type="hidden" name="itemId" value="<%= item.id %>">
                     <!-- Heart button to submit the form -->
                     <button type="submit">
                         <% if (item.liked == true) { %>

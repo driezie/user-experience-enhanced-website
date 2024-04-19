@@ -98,10 +98,10 @@
         </div>
         <div class="content">            
             <div class="playlists">
-                <% if (liked.length > 0) { %>
+                <% if (liked_playlists.length > 0) { %>
                     <h2>Liked playlists</h2>
                     <div class="card-grid card-grid-3">
-                        <% liked.forEach(item => { %>
+                        <% liked_playlists.forEach(item => { %>
                         <%- include('./components/playlist-card',{item: item}) %>
                         <% }) %>
                     </div>
