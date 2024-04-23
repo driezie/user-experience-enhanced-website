@@ -1,34 +1,37 @@
-<!-- 
-    Available variables:
-    - item: object
-        - title: string
-        - slug: string
-        - image: string
- -->
 <div class="card card-playlist">
-    <img class="logo" src="https://fdnd-agency.directus.app/assets/<%= item.image %>" alt="<%= item.title %>">
+    <img class="logo" loading="lazy" src="https://fdnd-agency.directus.app/assets/<%= item.image?.id %>" alt="<%= item.title %>" height="164">
     <div class="text-content">
         <div class="title-content">
-            <h3><%= item.title %></h3>
+            <h3 style="font-family: sans-serif;"><%= item.title %></h3>
         </div>
         <div class="actions">
             <a href="<%= item.slug %>" class="play">
-                <img src="images/play-button.png" alt="play button">
+                <img src="images/play-button.png" alt="play button" height="40" width="40">
                 <span>
-                    <!-- Dit moet ik nog veranderen naar de tijd -->
+                    <!-- 
+                        Hierin staat het aantal stories van een playlist
+                        Later wil ik hierin ook de tijd van de playlist duur zetten
+                    -->
                     <%= item.stories.length %> stories
                 </span>
             </a>
             <div class="additional-actions">
-                <form action="/like" method="POST">
-                    <!-- Include a hidden input field for itemId -->
+                <form action="/" method="POST">
+                    <!-- 
+                        Maakt een hidden input aan met de id van het item
+                        Door dit te gebruiken kan ik de data van de playlist doorsturen naar de back-end
+                     -->
                     <input type="hidden" name="itemId" value="<%= item.id %>">
-                    <!-- Heart button to submit the form -->
                     <button type="submit">
-                        <% if (item.liked == true) { %>
-                            <img src="/svg/heart-filled.svg" alt="heart icon">
+                        <!-- 
+                            Checkt of het item in de favourites array zit
+                            Als dat zo is dan laat hij een gevulde hartje zien
+                            Zo niet dan laat hij een leeg hartje zien
+                         -->
+                        <% if (favourites.includes(String(item.id))) { %>
+                            <img src="/svg/heart-filled.svg" alt="heart icon" height="24" width="24">
                         <% } else { %>
-                            <img src="/svg/heart.svg" alt="heart icon">
+                            <img src="/svg/heart.svg" alt="heart icon" height="24" width="24">
                         <% } %>
                     </button>
                 </form>
@@ -36,3 +39,5 @@
         </div>
     </div>
 </div>
+
+
