@@ -37,7 +37,6 @@ app.get('/', async (request, response) => {
     const liked_playlists = [];
 
     // Rendert de home pagina met alle data
-
     response.render('index', {
       playlists: playlists.data || [],
       liked_playlists: liked_playlists || [],
@@ -46,46 +45,46 @@ app.get('/', async (request, response) => {
 });
 
 // POST function voor het liken van een playlist
-// app.post('/', async (req, res) => {
-//   try {
+app.post('/', async (req, res) => {
+  try {
 
-//     console.log(favourites)
-//     // Ontvant het item id
-//     const itemId = req.body.itemId;
-//     console.log('Item liked:', itemId);
+    console.log(favourites)
+    // Ontvant het item id
+    const itemId = req.body.itemId;
+    console.log('Item liked:', itemId);
 
-//     // Bekijkt of het item al geliked is
-//     if (favourites.includes(itemId)) {
-//       // Verwijderd item uit liked items
-//       favourites = favourites.filter(item => item !== itemId);
-//     } else {
-//       // Voegt item toe aan liked items
-//       favourites.push(itemId);
-//     }
+    // Bekijkt of het item al geliked is
+    if (favourites.includes(itemId)) {
+      // Verwijderd item uit liked items
+      favourites = favourites.filter(item => item !== itemId);
+    } else {
+      // Voegt item toe aan liked items
+      favourites.push(itemId);
+    }
 
 
-//     console.log(favourites)
-//     // Haal alle 'normale' playlists op
-//     const API = `${apiUrl}/tm_playlist?fields=id,title,description,slug,image.*,image.*.*,image*.*.*,image.id,image.height,image.width,stories.tm_story_id.title,stories.tm_story_id.summary,stories.tm_story_id.image,stories.tm_story_id.slug,language_id.language,language_id.flag.id`;
-//     const allPlaylistsResponse = await fetch(API);
-//     const playlists = await allPlaylistsResponse.json();
+    console.log(favourites)
+    // Haal alle 'normale' playlists op
+    const API = `${apiUrl}/tm_playlist?fields=id,title,description,slug,image.*,image.*.*,image*.*.*,image.id,image.height,image.width,stories.tm_story_id.title,stories.tm_story_id.summary,stories.tm_story_id.image,stories.tm_story_id.slug,language_id.language,language_id.flag.id`;
+    const allPlaylistsResponse = await fetch(API);
+    const playlists = await allPlaylistsResponse.json();
 
-//     // Haal alle 'gelikede' playlists op
-//     const liked_playlists = [];
+    // Haal alle 'gelikede' playlists op
+    const liked_playlists = [];
 
-//     // Rendert de home pagina met alle data
-//     res.render('index', {
-//       playlists: playlists.data || [],
-//       liked_playlists: liked_playlists || [],
-//       favourites: favourites || [],
-//     });
+    // Rendert de home pagina met alle data
+    res.render('index', {
+      playlists: playlists.data || [],
+      liked_playlists: liked_playlists || [],
+      favourites: favourites || [],
+    });
 
-//     // Zo niet, geef een error
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Internal Server Error");
-//   }
-// });
+    // Zo niet, geef een error
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 
 // Renderd alle playlists
