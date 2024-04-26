@@ -1,6 +1,12 @@
 <div class="card card-playlist">
-    <img class="logo" loading="lazy" src="https://fdnd-agency.directus.app/assets/<%= item.image?.id %>" alt="<%= item.title %>" height="164">
+    <picture>
+        <source srcset="https://fdnd-agency.directus.app/assets/<%= item.image?.id %>?format=avif" type="image/avif">
+        <source srcset="https://fdnd-agency.directus.app/assets/<%= item.image?.id %>?format=webp" type="image/webp">
+        <img class="logo" loading="lazy" src="https://fdnd-agency.directus.app/assets/<%= item.image?.id %>" alt="<%= item.title %>" height="164">
+    </picture>
+    
     <div class="text-content">
+        <%= console.log(item) %>
         <div class="title-content">
             <h3 style="font-family: sans-serif;"><%= item.title %></h3>
         </div>
@@ -29,9 +35,9 @@
                             Zo niet dan laat hij een leeg hartje zien
                          -->
                         <% if (favourites.includes(String(item.id))) { %>
-                            <img src="/svg/heart-filled.svg" alt="heart icon" height="24" width="24">
+                            <img src="/svg/heart-filled.svg" alt="like filled heart icon" height="24" width="24">
                         <% } else { %>
-                            <img src="/svg/heart.svg" alt="heart icon" height="24" width="24">
+                            <img src="/svg/heart.svg" alt="like heart icon" height="24" width="24">
                         <% } %>
                     </button>
                 </form>

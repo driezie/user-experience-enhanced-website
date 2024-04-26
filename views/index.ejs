@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/style/navbar.css">
-    <link rel="stylesheet" href="/style/style2.css">
+    <link rel="stylesheet" href="/style/style.css">
     <script src="/js/main.js" defer></script>
 
     <title>Home</title>
@@ -108,5 +108,26 @@
             </div>
         </div>
     </div>
+
+    <script>
+        const forms = document.querySelectorAll('form');
+
+        // Maakt een event aan voor elke form
+        // Zodat de data verstuurd kan worden naar de back-end
+        forms.forEach(form => {
+            form.addEventListener('submit', async (e) => {
+                // Zorgt ervoor dat de form niet gebruikt wordt
+                e.preventDefault();
+
+                // Verstuurd de data naar de back-end
+                const formData = new FormData(form);
+
+
+                const itemId = formData.get('itemId');
+                console.log(itemId);
+                
+            });
+        });
+    </script>
         
 <%- include('./partials/foot') %>
