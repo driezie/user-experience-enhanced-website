@@ -8,8 +8,7 @@ body {
 
     overflow: hidden;
     height: 100vh;
-    background: linear-gradient(180deg, #3C6FA9 0%, #052242 100%);
-    background-image: url("/images/background-mountains.png");
+    background-image: url("/images/background-mountains.png"), linear-gradient(180deg, #3C6FA9 0%, #97b7d7 100%);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: bottom;
@@ -127,7 +126,7 @@ img {
 
 .card {
   min-height: 285px;
-  height: 285px;
+  /* height: 295px; */
   display: flex;
   flex-direction: column;
   max-width: 100%;
@@ -139,47 +138,20 @@ img {
 
   picture {
     width: 100%;
-    height: 100%
-  }
-
-  source {
-    width: 100%;
-    height: 164px;
-    border-radius: 4px;
-    object-fit: cover;
-  }
-
-  img.logo {
-    width: 100%;
-    height: 164px;
-    border-radius: 4px;
-    object-fit: cover;
-    position: relative;
-  }
-
-  img.logo::before {
-    content: '';
-    width: 100%;
     height: 100%;
     background-color: #5AB4F5;
+    max-height: 164px;
+    overflow: hidden;
     border-radius: 4px;
-    position: absolute;
-    top: 50%;
-    left: -2px;
-    transform: translateY(-50%);
   }
 
-  img.logo::after {
-    content: '"'attr(alt) '" couldnt be loaded';
-    font-size: 10px;
-    color: white;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8rem;
-    text-align: center;
-
+  img.logo, source {
+    /* center */
+    width: 100%;
+    height: 100%;
+    object-position: center;
+    object-fit: cover;
+    position: relative;
   }
 
   .text-content {
@@ -198,7 +170,7 @@ img {
       h3 {
         font-size: 1.5rem;
         font-weight: 600;
-        margin: 0;
+        margin: 10px 0;
       }
     }
 
@@ -261,11 +233,13 @@ img {
   .nav-container nav .buttons {
     display: none;
   }
+
 }
 
 
 @media (max-width: 768px) {
   body {
+    overflow: auto;
       background-image: none;
       background: linear-gradient(180deg, #3C6FA9 0%, #052242 100%);
   }
@@ -283,7 +257,17 @@ img {
     display: grid;
     gap: 12px;
     grid-template-columns: repeat(2, 1fr);
+  }
+
+.dashboard .content {
+    overflow-y: auto;
 }
 }
 
 
+@media (max-width: 468px) {
+  .card-grid {
+
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

@@ -2,11 +2,10 @@
     <picture>
         <source srcset="https://fdnd-agency.directus.app/assets/<%= item.image?.id %>?format=avif" type="image/avif">
         <source srcset="https://fdnd-agency.directus.app/assets/<%= item.image?.id %>?format=webp" type="image/webp">
-        <img class="logo" loading="lazy" src="https://fdnd-agency.directus.app/assets/<%= item.image?.id %>" alt="<%= item.title %>" height="164">
+        <img class="logo" loading="lazy" src="https://fdnd-agency.directus.app/assets/<%= item.image?.id %>" alt="<%= item.title %>" height="164" width="<%= item.image?.width %>">
     </picture>
     
     <div class="text-content">
-        <%= console.log(item) %>
         <div class="title-content">
             <h3 style="font-family: sans-serif;"><%= item.title %></h3>
         </div>
@@ -27,18 +26,21 @@
                         Maakt een hidden input aan met de id van het item
                         Door dit te gebruiken kan ik de data van de playlist doorsturen naar de back-end
                      -->
+                     <input type="hidden" name="isLiked" value="<%= item.isLiked %>">
                     <input type="hidden" name="itemId" value="<%= item.id %>">
-                    <button type="submit">
+                    <button type="submit" data-ifLiked="<%= item.isLiked %>">
                         <!-- 
                             Checkt of het item in de favourites array zit
                             Als dat zo is dan laat hij een gevulde hartje zien
                             Zo niet dan laat hij een leeg hartje zien
                          -->
-                        <% if (favourites.includes(String(item.id))) { %>
+                         <% if (item.isLiked) { %>
                             <img src="/svg/heart-filled.svg" alt="like filled heart icon" height="24" width="24">
                         <% } else { %>
                             <img src="/svg/heart.svg" alt="like heart icon" height="24" width="24">
                         <% } %>
+
+                        
                     </button>
                 </form>
             </div>
