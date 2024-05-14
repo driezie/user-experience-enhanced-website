@@ -73,30 +73,30 @@ Op de pagina kan je alle playlists zien. Hierzin zitten er allemaal verschillend
 - **Stap 1**
 Om de github te clonen moet je het volgende doen:
 ```git
-git clone https://github.com/driezie/connect-your-tribe-profile-card.git
+git clone https://github.com/driezie/user-experience-enhanced-website.git
 ```
 
 - **Stap 2**
 Navigate naar je folder waarin je dit hebt gepushed door middel van:
 ```git
-cd connect-your-tribe-profile-card
+cd user-experience-enhanced-website
 ```
 
 - **Stap 3**
 Instaleer node.js voor dit project als je dat nog niet had gedaan:
 ```git
-install node.js
+npm install
 ```
 
 - **Stap 3**
 ```git
-npm install vercel
+npm install express
 ```
 
 - **Stap 4**
 
 ```git
-vercel dev
+npm start
 ```
 
 ## Bronnen
