@@ -82,6 +82,7 @@ app.post('/', async (req, res) => {
   const likedPlaylists = likedPlaylistsData.data;
 
   // Controleer of de afspeellijst al geliked is
+  // Dit is de code waar ik hulp nodig mee heb
   if (isLiked) {
     console.log("Remove playlist from favorites");
     // Als de afspeellijst al geliked is, verwijder deze dan
