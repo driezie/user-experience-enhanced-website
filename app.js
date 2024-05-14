@@ -39,141 +39,129 @@ function checkIfLiked(playlist, array) {
 }
 
 app.get('/', async (request, response) => {
-  try {
-    // Fetch alle playlists
-    const playlistsAPI = `${apiUrl}/tm_playlist?fields=*.*.*.*`;
-    const playlistsResponse = await fetch(playlistsAPI);
-    const playlistsData = await playlistsResponse.json();
-    const playlists = playlistsData.data;
+  // Fetch alle playlists
+  const playlistsAPI = `${apiUrl}/tm_playlist?fields=*.*.*.*`;
+  const playlistsResponse = await fetch(playlistsAPI);
+  const playlistsData = await playlistsResponse.json();
+  const playlists = playlistsData.data;
 
-    // Fetcht alle gelikede playlists van de gebruiker
-    const likedAPI = `${apiUrl}/tm_likes?filter={"user":"4"}`;
-    const likedPlaylistsResponse = await fetch(likedAPI);
-    const likedPlaylistsData = await likedPlaylistsResponse.json();
-    const likedPlaylists = likedPlaylistsData.data;
+  // Fetcht alle gelikede playlists van de gebruiker
+  const likedAPI = `${apiUrl}/tm_likes?filter={"user":"4"}`;
+  const likedPlaylistsResponse = await fetch(likedAPI);
+  const likedPlaylistsData = await likedPlaylistsResponse.json();
+  const likedPlaylists = likedPlaylistsData.data;
 
-    // Voeg de isLiked-status toe aan elke playlist
-    const playlistsWithLikedStatus = playlists.map(playlist => {
-        return checkIfLiked(playlist, likedPlaylists);
-    });
+  // Voeg de isLiked-status toe aan elke playlist
+  const playlistsWithLikedStatus = playlists.map(playlist => {
+      return checkIfLiked(playlist, likedPlaylists);
+  });
 
 
-    // Filter alleen de gelikede playlists
-    const likedPlaylistsOnly = playlistsWithLikedStatus.filter(playlist => playlist.isLiked);
+  // Filter alleen de gelikede playlists
+  const likedPlaylistsOnly = playlistsWithLikedStatus.filter(playlist => playlist.isLiked);
 
-    // Render de homepagina met de data
-    response.render('index', {
-        apiUrl: apiUrl,
-        playlists: playlistsWithLikedStatus || [],
-        liked_playlists: likedPlaylistsOnly || [],
-    });
-  } catch (error) {
-      console.error(error);
-      response.status(500).send("Internal Server Error");
-  }
+  // Render de homepagina met de data
+  response.render('index', {
+      apiUrl: apiUrl,
+      playlists: playlistsWithLikedStatus || [],
+      liked_playlists: likedPlaylistsOnly || [],
+  });
 });
 
 // POST-functie voor het leuk vinden van een afspeellijst
 app.post('/', async (req, res) => {
-  try {
-    // Ontvang het item id
-    const itemId = req.body.itemId;
-    const isLiked = req.body.isLiked;
-    console.log("isLiked: ", isLiked);
+  // Ontvang het item id
+  const itemId = req.body.itemId;
+  const isLiked = req.body.isLiked;
+  console.log("isLiked: ", isLiked);
 
-    // Fetcht alle gelikede playlists van de gebruiker
-    const likedAPI = `${apiUrl}/tm_likes?filter={"user":"4"}`;
-    const likedPlaylistsResponse = await fetch(likedAPI);
-    const likedPlaylistsData = await likedPlaylistsResponse.json();
-    const likedPlaylists = likedPlaylistsData.data;
+  // Fetcht alle gelikede playlists van de gebruiker
+  const likedAPI = `${apiUrl}/tm_likes?filter={"user":"4"}`;
+  const likedPlaylistsResponse = await fetch(likedAPI);
+  const likedPlaylistsData = await likedPlaylistsResponse.json();
+  const likedPlaylists = likedPlaylistsData.data;
 
-    // Controleer of de afspeellijst al geliked is
-    if (isLiked == true || isLiked == "true") {
-      console.log("Remove playlist from favorites");
-      // Als de afspeellijst al geliked is, verwijder deze dan
-      const removeUrl = `${apiUrl}/tm_likes`;
-      const removeResponse = await fetch(removeUrl, {
-        method: 'DELETE',
-        body: JSON.stringify({ "playlist": itemId, "user": 4 }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      console.log("Remove response: ", removeResponse);
-
-
-      if (!removeResponse.ok) {
-        // Geef een error als het niet lukt om de afspeellijst te verwijderen
-        throw new Error('Failed to remove playlist from favorites');
+  // Controleer of de afspeellijst al geliked is
+  if (isLiked) {
+    console.log("Remove playlist from favorites");
+    // Als de afspeellijst al geliked is, verwijder deze dan
+    const removeUrl = `${apiUrl}/tm_likes`;
+    const removeResponse = await fetch(removeUrl, {
+      method: 'DELETE',
+      body: JSON.stringify({ "playlist": itemId, "user": 4 }),
+      headers: {
+        'Content-Type': 'application/json'
       }
-    } else {
-      // Als de afspeellijst niet geliked is, voeg deze dan toe
-      const addUrl = `${apiUrl}/tm_likes`;
-      const addResponse = await fetch(addUrl, {
-        method: 'POST',
-        body: JSON.stringify({ playlist: itemId, user: 4 }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+    });
 
-      if (!addResponse.ok) {
-        // Geef een error als het niet lukt om de afspeellijst toe te voegen aan de gelikede afspeellijsten
-        throw new Error('Failed to add playlist to favorites');
-      }
+    console.log("Remove response: ", removeResponse);
+
+
+    if (!removeResponse.ok) {
+      // Geef een error als het niet lukt om de afspeellijst te verwijderen
+      throw new Error('Failed to remove playlist from favorites');
     }
-
-    // Haal alle 'normale' afspeellijsten op
-    const playlistsAPI = `${apiUrl}/tm_playlist?fields=*.*.*.*`;
-    const playlistsResponse = await fetch(playlistsAPI);
-    const playlistsData = await playlistsResponse.json();
-    const playlists = playlistsData.data;
-
-    // Haal alle gelikede afspeellijsten op
-    const updatedLikedPlaylistsResponse = await fetch(likedAPI);
-    const updatedLikedPlaylistsData = await updatedLikedPlaylistsResponse.json();
-    const updatedLikedPlaylists = updatedLikedPlaylistsData.data;
-
-    // Voeg de isLiked-status toe aan elke afspeellijst
-    const playlistsWithLikedStatus = playlists.map(playlist => {
-        return checkIfLiked(playlist, updatedLikedPlaylists);
+  } else {
+    // Als de afspeellijst niet geliked is, voeg deze dan toe
+    const addUrl = `${apiUrl}/tm_likes`;
+    const addResponse = await fetch(addUrl, {
+      method: 'POST',
+      body: JSON.stringify({ playlist: itemId, user: 4 }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
 
-    // Filter alleen de gelikede afspeellijsten
-    const likedPlaylistsOnly = playlistsWithLikedStatus.filter(playlist => playlist.isLiked);
-
-    // Rendert de homepagina met alleen de gelikede afspeellijsten
-    res.render('index', {
-        apiUrl: apiUrl,
-        playlists: playlistsWithLikedStatus || [],
-        liked_playlists: likedPlaylistsOnly || [],
-    });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Interne serverfout");
+    if (!addResponse.ok) {
+      // Geef een error als het niet lukt om de afspeellijst toe te voegen aan de gelikede afspeellijsten
+      throw new Error('Failed to add playlist to favorites');
+    }
   }
+
+  // Haal alle 'normale' afspeellijsten op
+  const playlistsAPI = `${apiUrl}/tm_playlist?fields=*.*.*.*`;
+  const playlistsResponse = await fetch(playlistsAPI);
+  const playlistsData = await playlistsResponse.json();
+  const playlists = playlistsData.data;
+
+  // Haal alle gelikede afspeellijsten op
+  const updatedLikedPlaylistsResponse = await fetch(likedAPI);
+  const updatedLikedPlaylistsData = await updatedLikedPlaylistsResponse.json();
+  const updatedLikedPlaylists = updatedLikedPlaylistsData.data;
+
+  // Voeg de isLiked-status toe aan elke afspeellijst
+  const playlistsWithLikedStatus = playlists.map(playlist => {
+      return checkIfLiked(playlist, updatedLikedPlaylists);
+  });
+
+  // Filter alleen de gelikede afspeellijsten
+  const likedPlaylistsOnly = playlistsWithLikedStatus.filter(playlist => playlist.isLiked);
+
+  // Rendert de homepagina met alleen de gelikede afspeellijsten
+  res.render('index', {
+      apiUrl: apiUrl,
+      playlists: playlistsWithLikedStatus || [],
+      liked_playlists: likedPlaylistsOnly || [],
+  });
 });
 
 
 
 
-// Renderd alle playlists
-// app.get('/playlists', async (request, response) => {
-//   // try {
-//   //   const API =  `${apiUrl}/tm_playlist`;
-//   //   const [data] = await Promise.all([
-//   //     fetch(API).then(res => res.json()),
-//   //   ]);
-//   //   response.render('playlists', {
-//   //     playlist: dataFinal.data,
-//   //   });
-//   // } catch (error) {
-//   //   console.error(error);
-//   //   response.status(500).send("Internal Server Error");
-//   // }
-// });
+app.get('/playlists', async (request, response) => {
+  // try {
+  //   const API =  `${apiUrl}/tm_playlist`;
+  //   const [data] = await Promise.all([
+  //     fetch(API).then(res => res.json()),
+  //   ]);
+  //   response.render('playlists', {
+  //     playlist: dataFinal.data,
+  //   });
+  // } catch (error) {
+  //   console.error(error);
+  //   response.status(500).send("Internal Server Error");
+  // }
+});
 
 // // Renderd de playlist pagina via de slug
 // app.get('/:slug', async (request, response) => {
