@@ -39,6 +39,8 @@ function checkIfLiked(playlist, array) {
 }
 
 app.get('/', async (request, response) => {
+  //? Hier moet ik de code aanpassen zodat de liked id 
+  //? opgehaald wordt via de playlists als dat kan
   // Fetch alle playlists
   const playlistsAPI = `${apiUrl}/tm_playlist?fields=*.*.*.*`;
   const playlistsResponse = await fetch(playlistsAPI);
@@ -72,6 +74,7 @@ app.get('/', async (request, response) => {
 app.post('/', async (req, res) => {
   // Ontvang het item id
   const itemId = req.body.itemId;
+  console.log("itemId: ", itemId);
   const isLiked = req.body.isLiked;
   console.log("isLiked: ", isLiked);
 
@@ -82,16 +85,17 @@ app.post('/', async (req, res) => {
   const likedPlaylists = likedPlaylistsData.data;
 
 
-  //? Dit is de code waar ik hulp nodig mee heb
   // Controleer of de afspeellijst al geliked is
   //? Dit is de code waar ik hulp nodig mee heb
+  //? Error is no permissions, id is 2 maar hoort ongeveer 267 te zijn
+  //? Hoe krijg ik dan de juiste "liked" id van de liked playlist?
   if (isLiked) {
     console.log("Remove playlist from favorites");
     // Als de afspeellijst al geliked is, verwijder deze dan
-    const removeUrl = `${apiUrl}/tm_likes`;
+    const removeUrl = `${apiUrl}/tm_likes/${itemId}`;
+    console.log("Remove url: ", removeUrl);
     const removeResponse = await fetch(removeUrl, {
       method: 'DELETE',
-      body: JSON.stringify({ "playlist": itemId, "user": 4 }),
       headers: {
         'Content-Type': 'application/json'
       }
