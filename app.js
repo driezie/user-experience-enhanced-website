@@ -81,8 +81,10 @@ app.post('/', async (req, res) => {
   const likedPlaylistsData = await likedPlaylistsResponse.json();
   const likedPlaylists = likedPlaylistsData.data;
 
+
+  //? Dit is de code waar ik hulp nodig mee heb
   // Controleer of de afspeellijst al geliked is
-  // Dit is de code waar ik hulp nodig mee heb
+  //? Dit is de code waar ik hulp nodig mee heb
   if (isLiked) {
     console.log("Remove playlist from favorites");
     // Als de afspeellijst al geliked is, verwijder deze dan
@@ -99,7 +101,7 @@ app.post('/', async (req, res) => {
 
 
     if (!removeResponse.ok) {
-      // Geef een error als het niet lukt om de afspeellijst te verwijderen
+      //! Geef een error als het niet lukt om de afspeellijst te verwijderen
       throw new Error('Failed to remove playlist from favorites');
     }
   } else {
@@ -114,7 +116,7 @@ app.post('/', async (req, res) => {
     });
 
     if (!addResponse.ok) {
-      // Geef een error als het niet lukt om de afspeellijst toe te voegen aan de gelikede afspeellijsten
+      //! Geef een error als het niet lukt om de afspeellijst toe te voegen aan de gelikede afspeellijsten
       throw new Error('Failed to add playlist to favorites');
     }
   }
@@ -148,7 +150,7 @@ app.post('/', async (req, res) => {
 
 
 
-
+//? Tijdelijke code uitgezet
 app.get('/playlists', async (request, response) => {
   // try {
   //   const API =  `${apiUrl}/tm_playlist`;
